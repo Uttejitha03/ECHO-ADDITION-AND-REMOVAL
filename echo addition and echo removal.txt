@@ -1,0 +1,52 @@
+clc 
+clear all 
+close all 
+%Reading the original audio signal 
+fs=44100; 
+y=audioread 
+%Playing the original song 
+p=audioplayer(y,fs); 
+play(p); 
+stop(p); 
+%Adding echo 
+num=[1,zeros(1,4800),0.8]; 
+den=[1]; 
+x=filter(num,den,y); 
+p=audioplayer(x,fs); 
+play(p); 
+stop(p); 
+%Removing echo 
+den=[1,zeros(1,4800),0.8]; 
+num=[1]; 
+r=filter(num,den,x); 
+p=audioplayer(r,fs); 
+play(p); 
+stop(p); 
+w=-pi:0.01:pi; 
+num=[1 zeros(1,10) 0.8]; 
+den=[1]; 
+h=freqz(num,den,w); 
+subplot(2,1,1); 
+plot(w/pi,abs(h),'b'); 
+ylabel('Magnitude'); 
+subplot(2,1,2); 
+plot(w/pi,angle(h)); 
+ylabel('Phase'); 
+%Noisy sound signal generation 
+N=5000; 
+x=randn(1,N); 
+sound(x,8000) 
+%Comb filter implementation 
+w=-pi:0.01:pi; 
+den=[1,zeros(1,10),0.9]; 
+num=[1]; 
+h=freqz(num,den,w); 
+subplot(2,1,1); 
+plot(w/pi,abs(h),'b'); 
+ylabel('Magnitude'); 
+subplot(2,1,2); 
+plot(w/pi,angle(h)); 
+ylabel('Phase'); 
+%Filtering noisy signal through comb filter 
+y=filter(num,den,x); 
+sound(y,8000)
